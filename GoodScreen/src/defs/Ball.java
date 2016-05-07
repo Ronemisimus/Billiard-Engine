@@ -53,7 +53,7 @@ public class Ball {
          * @param writeColor-the writing color
          * @param play -if the ball is hit by the stick
          */
-	public Ball(String text, Point2D point2d,Color bcolor,Color writeColor,boolean play) {
+	public Ball(String text, Point2D point2d,Color bcolor,Color writeColor,boolean play) throws NullPointerException{
 		super();
 		if(text.contains(";")){
 			String[] data=text.split(";");
@@ -105,33 +105,45 @@ public class Ball {
          */
 	public void resolveCollision(Ball b){
             if(!dead&&!b.isDead()){
-		double v1n, v2n, v1t, v2t;
-		Vector2d un=new Vector2d(pos, b.getPos());//normal
-		double dis=un.length();
-		un=un.normalize();
-		if(dis<radius+b.getRadius()){
-			double scale=radius+b.getRadius()-dis+4;
-			Vector2d mindis=un.scale(scale);
-			b.setPos(mindis.add(b.getPos()));
-		}
-		Vector2d ut=new Vector2d(-un.dY, un.dX);
-		if(getSpeed().dX!=0||getSpeed().dY!=0){
-		v1n=un.dotProduct(getSpeed());
-		v2n=un.dotProduct(b.getSpeed());
-		v1t=ut.dotProduct(getSpeed());
-		v2t=un.dotProduct(b.getSpeed());
-		double con=1/(getMass()+b.getMass());
-		double v1_n=v1n*(getMass()-b.getMass())+2*b.getMass()*v2n;
-		v1n=v1n*con;
-		double v2_n=v2n*(b.getMass()-getMass())+2*getMass()*v1n;
-		v2n=v2n*con;
-		Vector2d v1nv=un.scale(v1_n);
-		Vector2d v2nv=un.scale(v2_n);
-		Vector2d v1tv=ut.scale(v1t);
-		Vector2d v2tv=ut.scale(v2t);
-		setSpeed(v1tv.add(v1nv));
-		b.setSpeed(v2tv.add(v2nv));
-		}
+                if(mass==0&&b.getMass()==0)return;
+                Vector2d v_nfull=new Vector2d(pos, b.getPos());
+                
+                float im1 =(float)( 1 / getMass()); 
+                float im2 = (float)(1 / b.getMass());
+                
+                Vector2d mtd=v_nfull.scale(((getRadius()+b.getRadius())-v_nfull.length())/v_nfull.length());
+
+                setPos(mtd.scale(im1/(im1+im2)).add(pos));
+                b.setPos(mtd.scale(im2/(im1+im2)).add(b.getPos()));
+
+                Vector2d v=speed.subtract(b.getSpeed());
+                float vn=(float)(v.dotProduct(mtd));
+                
+                if (vn > 0.0f) return;
+                
+                Vector2d v_n=v_nfull.normalize();
+                Vector2d v_t=new Vector2d(-v_n.dY, v_n.dX);
+                
+                double v1n = v_n.dotProduct(speed);
+                double v1t = v_t.dotProduct(speed);
+                double v2n = v_n.dotProduct(b.getSpeed());
+                double v2t = v_t.dotProduct(b.getSpeed());
+                
+                double v1tPrime=v1t;
+                double v2tPrime = v2t;
+                
+                double v1nPrime = (v1n * (mass - b.getMass()) + 2. * b.getMass() * v2n) / (mass + b.getMass());
+                double v2nPrime = (v2n * (b.getMass() - mass) + 2. * mass * v1n) / (mass + b.getMass());
+                
+                Vector2d v_v1nPrime = v_n.scale(v1nPrime);
+                Vector2d v_v1tPrime = v_t.scale(v1tPrime);
+                Vector2d v_v2nPrime = v_n.scale(v2nPrime);
+                Vector2d v_v2tPrime = v_t.scale(v2tPrime);
+                
+                Vector2d finalV1=v_v1nPrime.add(v_v1tPrime);
+                Vector2d finalV2=v_v2nPrime.add(v_v2tPrime);
+                setSpeed(finalV1);
+                b.setSpeed(finalV2);
             }
 	}
 	/**
