@@ -9,8 +9,6 @@ import defs.Ball;
 import defs.Board;
 import defs.Stick;
 import defs.Vector2d;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
 /**
  * runs the game
@@ -18,7 +16,6 @@ import javax.swing.JOptionPane;
  */
 public class Runner {
 	private Ball[] balls;
-        private List<Collision> colls;
         private Dimension size;
 	private Board board;
         public Stick s;
@@ -53,7 +50,6 @@ public class Runner {
          * @param mode -current mode
          */
 	public void Update(Point2D mouseloc,int mode){
-                colls=new ArrayList<>();
                 if(setmode()){
                     this.mode=0;
                 }
@@ -99,15 +95,9 @@ public class Runner {
                 for(int i=0;i<balls.length;i++){
 			for(int j=i+1;j<balls.length;j++){
 				if(balls[i].isColliding(balls[j])){
-					colls.add(new Collision(balls[i], balls[j]));
+					balls[i].resolveCollision(balls[j]);
 				}
 			}
-                }
-                Collision.i=0;
-                colls=Collision.orgenise(colls);
-                System.out.print(colls);
-                for(Collision x:colls){
-                    x.handleCollision();
                 }
                 if(this.mode==0){
                     s.setLoc(mouseloc);
@@ -197,52 +187,4 @@ public class Runner {
     }
 
 
-}
-class Collision{
-    private Ball a;
-    private Ball b;
-    private double length;
-    public static int i;
-    public Collision(Ball a,Ball b){
-        this.a=a;
-        this.b=b;
-        length=new Vector2d(a.getPos(), b.getPos()).length();
-    }
-    public void handleCollision(){
-        a.resolveCollision(b);
-    }
-    public static List<Collision> orgenise(List<Collision> a){
-        i++;
-        if(a.isEmpty()||a.size()==1||i>100){
-            return a;
-        }
-        else if(a.size()==2){
-            if(a.get(0).length>a.get(1).length){
-                Collision temp=a.get(0);
-                a.set(0, a.get(1));
-                a.set(1, temp);
-            }
-            return a;
-        }
-        else{
-            List<Collision> left=new ArrayList<>();
-            List<Collision> right=new ArrayList<>();
-            Collision pivot=a.get((int)(Math.random()*a.size()));
-            for(Collision x:a){
-                if(x.length>pivot.length){
-                    right.add(x);
-                }
-                else{
-                    left.add(x);
-                }
-            }
-            a.clear();
-            a.addAll(orgenise(left));
-            a.addAll(orgenise(right));
-            return a;
-        }
-    }
-    public String toString(){
-        return "a:"+ a.getBallNum()+"b: "+ b.getBallNum()+ "length: "+ length;
-    }
 }
