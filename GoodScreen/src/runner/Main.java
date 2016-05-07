@@ -163,7 +163,6 @@ class MyPanel extends JPanel{
                             else{
                                speed=Main.run.s.getDir().scale(Main.run.s.getPlayball().getRadius()).scale(0.2);
                             }
-                            System.out.print(speed);
                             Main.run.s.setSpeed(speed);
                             Main.run.setTurn(true);
                             Runner.turnnum++;
@@ -185,10 +184,10 @@ class MyPanel extends JPanel{
                             Vector2d speed;
                             double distance=Main.run.s.getPlayball().getPos().distance(getMousePosition());
                             if(distance>Main.run.s.getLength()/2){
-                                speed=new Vector2d(Main.run.s.getDir().scale(Main.run.s.getLength()/2).add(getMousePosition()), Main.run.s.getPlayball().getPos()).scale(0.005);
+                                speed=new Vector2d(Main.run.s.getDir().scale(Main.run.s.getLength()/2).add(getMousePosition()), Main.run.s.getPlayball().getPos()).scale(0.025);
                             }
                             else{
-                                speed=Main.run.s.getDir().scale(Main.run.s.getPlayball().getRadius()).scale(0.005);
+                                speed=Main.run.s.getDir().scale(Main.run.s.getPlayball().getRadius()).scale(0.025);
                             }
                             System.out.print(speed);
                             Main.run.s.setSpeed(speed);

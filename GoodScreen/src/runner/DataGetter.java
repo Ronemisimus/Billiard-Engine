@@ -42,6 +42,7 @@ public class DataGetter extends JFrame{
 	private JLabel[] labels;
 	private JButton getballs;
 	private JButton setgame;
+        private JButton default_game;
 	private final Main m;
 	private final JFrame colorset;
 	private Ball[] balls;
@@ -77,9 +78,6 @@ public class DataGetter extends JFrame{
 		labels[1].setToolTipText("<html>"+"Choose the right screen size"+"<br>"
 				+"from the multi-choise box"
 				+"<html>");
-		//labels[2]=new JLabel("Enter board wood color:");
-		//labels[3]=new JLabel("Enter stick color:");
-		//labels[4]=new JLabel("");
 		labels[5]=new JLabel("for more information leave mouse hanging on a label");
 		labels[5].setToolTipText("Great Job :-)");
 		//data set:
@@ -87,13 +85,11 @@ public class DataGetter extends JFrame{
 		sizechoise=new JComboBox<>();
 		sizechoise.addItem(new Dimension(1024, 768));sizechoise.addItem(new Dimension(1366, 768));sizechoise.addItem(new Dimension(1280,720));sizechoise.addItem(new Dimension(1440,810));sizechoise.addItem(new Dimension(1600,900));sizechoise.addItem(new Dimension(1600, 1200));;sizechoise.addItem(new Dimension(1680,1050));sizechoise.addItem(new Dimension(1920,1080));
 		sizechoise.setPreferredSize(new Dimension(300, 30));
-		//data[2]=new JTextField(30);
-		//data[3]=new JTextField(30);
-		//data[4]=new JTextField(30);
-		//button
 		getballs =new JButton("modify balls");
 		setgame=new JButton("start playing already!!");
+                default_game=new JButton("Default Game");
 		al al=new al();
+                default_game.addActionListener(al);
 		getballs.addActionListener(al);
 		setgame.addActionListener(al);
 		//enter to frame
@@ -101,15 +97,10 @@ public class DataGetter extends JFrame{
 		this.add(data[0]);
 		this.add(labels[1]);
 		this.add(sizechoise);
-		//this.add(labels[2]);
-		//this.add(data[2]);
-		//this.add(labels[3]);
-		//this.add(data[3]);
-		//this.add(labels[4]);
-		//this.add(data[4]);
 		this.add(labels[5]);
 		this.add(getballs);
 		this.add(setgame);
+                this.add(default_game);
 
 	}
         /**
@@ -117,7 +108,7 @@ public class DataGetter extends JFrame{
          */
 	private void setFrame() {
 		setDone(false);
-		setSize(360,210);
+		setSize(360,235);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -168,8 +159,32 @@ public class DataGetter extends JFrame{
 				setDone(true);
 				m.createAndShowGUI(balls,(Dimension)sizechoise.getSelectedItem(),c,woodcolor,stickcolor);
 			}
+                        else if(e.getSource().equals(default_game)){
+                            int ballcount=16;
+                            c=new Color(0, 255, 0);
+                            woodcolor=new Color(120,120,120);
+                            stickcolor=new Color(120,120,120);
+                            balls=new Ball[ballcount];
+                            balls[0]=new Ball("30;0;1", new Point2D.Double(200, 400), Color.WHITE, Color.WHITE, true);
+                            balls[1]=new Ball("30;1;1", new Point2D.Double(200, 500), Color.YELLOW, Color.BLACK, false);
+                            balls[2]=new Ball("30;2;1", new Point2D.Double(200, 600), Color.BLUE, Color.BLACK, false);
+                            balls[3]=new Ball("30;3;1", new Point2D.Double(200, 700), Color.RED, Color.BLACK, false);
+                            balls[4]=new Ball("30;4;1", new Point2D.Double(300, 300), Color.MAGENTA, Color.BLACK, false);
+                            balls[5]=new Ball("30;5;1", new Point2D.Double(300, 400), Color.ORANGE, Color.BLACK, false);
+                            balls[6]=new Ball("30;6;1", new Point2D.Double(300, 500), new Color(0, 128, 0), Color.BLACK, false);
+                            balls[7]=new Ball("30;7;1", new Point2D.Double(300, 600), Color.DARK_GRAY, Color.BLACK, false);
+                            balls[8]=new Ball("30;8;1", new Point2D.Double(300, 700), Color.BLACK, Color.BLACK, false);
+                            balls[9]=new Ball("30;9;1", new Point2D.Double(400, 300), Color.YELLOW, Color.BLACK, false);
+                            balls[10]=new Ball("30;10;1", new Point2D.Double(400, 400), Color.BLUE, Color.BLACK, false);
+                            balls[11]=new Ball("30;11;1", new Point2D.Double(400, 500), Color.RED, Color.BLACK, false);
+                            balls[12]=new Ball("30;12;1", new Point2D.Double(400, 600), Color.MAGENTA, Color.BLACK, false);
+                            balls[13]=new Ball("30;13;1", new Point2D.Double(400, 700), Color.ORANGE, Color.BLACK, false);
+                            balls[14]=new Ball("30;14;1", new Point2D.Double(500, 500), new Color(0, 128, 0), Color.BLACK, false);
+                            balls[15]=new Ball("30;15;1", new Point2D.Double(500, 400), Color.DARK_GRAY, Color.BLACK, false);
+                            getball=true;
+                        }
 			else{
-				JOptionPane.showMessageDialog(DataGetter.this, "press modify balls first", "Warning", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(DataGetter.this, "press modify balls or default game first", "Warning", JOptionPane.WARNING_MESSAGE);
 			}
 
 		}
@@ -279,7 +294,11 @@ public class DataGetter extends JFrame{
                                     else{
                                         b=false;
                                     }
-                                    balls[i]=new Ball(data[i].getText(),new Point2D.Double(d.getWidth()*jp.ballpos[i].getX()/500, d.getHeight()*jp.ballpos[i].getY()/270), bcolor,wc,b);
+                                    try{
+                                        balls[i]=new Ball(data[i].getText(),new Point2D.Double(d.getWidth()*jp.ballpos[i].getX()/500, d.getHeight()*jp.ballpos[i].getY()/270), bcolor,wc,b);
+                                    }catch(NullPointerException exception){
+                                        JOptionPane.showMessageDialog(null, "ball i's data is entered wrong", "wrong input", JOptionPane.ERROR_MESSAGE);
+                                    }
                                 }
                                 if(count!=1){
                                     JOptionPane.showMessageDialog(colorset, "too many balls chosen!");

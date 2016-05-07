@@ -66,7 +66,6 @@ public class Stick implements Shape{
         g2d.setColor(stick);
     try{
         if(loc.distance(playball.getPos())-playball.getRadius()>length/2){
-            System.out.println(loc);
             g2d.fill(this);
         }
         else{
